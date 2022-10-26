@@ -1,0 +1,12 @@
+.main{
+    display:flex;
+    flex-direction: ;
+    width:70%;
+    margin:auto;
+}
+video{
+    display:flex;
+}
+input{
+    display:flex;
+}

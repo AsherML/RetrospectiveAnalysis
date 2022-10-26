@@ -1,0 +1,15 @@
+.main{
+    display:flex;
+    flex-direction: column;
+    width:70%;
+    margin:auto;
+}
+video{
+    display:flex;
+    margin:20px auto;
+}
+input{
+    display:flex;
+    margin:20px auto;
+    width:50%;
+}
