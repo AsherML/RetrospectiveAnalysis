@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" href="rough.css"/>
+        <script src="logger.js"></script>
+    </head>
+    <body>
+        <div class="main">
+            <h1>Retrospective Analysis!</h1>
+            <video id="video" width="500" height="500" controls>
+                <source src="rickroll.mp4" type="video/mp4">
+                Your browser doesn't support
+            </video>
+            <input id="slider" type="range" min="-1" max="1" step="0.05" value="0">
+        </div>
+        <script>
+            slider=document.getElementById("slider");
+            video=document.getElementById("video");
+            //slider.setAttribute("disabled", "true");
+
+            video.addEventListener('pause', (event)=>{slider.disabled=true});
+            video.addEventListener("play", (event)=>{slider.disabled=false});            
+        </script>
+
+        <script>
+            while(video.currentTime>0 && !!video.paused && !video.ended){
+                let time=(video.currentTime/60).toString()+":"+(video.currentTime%60)
+            }
+
+        </script>
+        <script>
+            setInterval(logTime, 2000);
+        </script>
+    </body>
+</html>

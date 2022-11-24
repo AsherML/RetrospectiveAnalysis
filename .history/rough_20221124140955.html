@@ -23,7 +23,25 @@
             function addressDelay(){
                 setTimeout(()=>{startLogging=setInterval(logTime, 500)}, 30);
             }
+
+            video.addEventListener("play", addressDelay);
+            video.addEventListener("pause", (event)=>{clearInterval(startLogging)});   
+            video.addEventListener('pause', (event)=>{slider.disabled=true});
+            video.addEventListener("play", (event)=>{slider.disabled=false});
+            video.addEventListener()
+                
+            function logTime(){
+                if(!(video.currentTime.toString() in log) ){
+                    log[video.currentTime.toString()]=slider.value;
+                }
+            }     
+            
+        </script>
+
+        <script>
             function downloadData(){
+            //download json
+            
                 let data=new Blob([JSON.stringify(log)],{type:'application/json'});
                 let a=window.document.createElement('a');
                 a.href=window.URL.createObjectURL(data);
@@ -32,26 +50,6 @@
                 a.click();
                 document.body.removeChild(a);
             }
-
-            video.addEventListener("play", addressDelay);
-            video.addEventListener("pause", (event)=>{clearInterval(startLogging)});   
-            video.addEventListener('pause', (event)=>{slider.disabled=true});
-            video.addEventListener("play", (event)=>{slider.disabled=false});
-            video.addEventListener('ended', downloadData);
-                
-            function logTime(){
-                if(!(video.currentTime.toString() in log) ){
-                    let hours=Math.floor(video.currentTime/3600);
-                    let minutes=Math.floor((video.currentTime-hours)/60);
-                    let seconds=Math.floor(((video.currentTime-(hours*3600))-(minutes*60)))
-                    log[hours+":"+minutes+":"+seconds]=slider.value;
-                }
-            }     
-            
-        </script>
-
-        <script>
-            
             
 
         </script>
