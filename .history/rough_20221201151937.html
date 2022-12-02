@@ -8,7 +8,7 @@
     <div id="main">
       <h1 onclick="downloadData()">CORAE v0.12a</h1>      
       <video id="video">
-        <source src="rickroll.mp4" type="video/mp4" tabindex="-1"/>
+        <source src="video.mp4" type="video/mp4" tabindex="-1"/>
         Your browser doesn't support the HTML5 video tag.
       </video>
       
@@ -40,9 +40,9 @@
       //slider.setAttribute("disabled", "true");
       var startLogging;
 
-      //  function addressDelay(){
-      //   setTimeout(()=>{startLogging=setInterval(logTime, 500)}, 30);
-      // }
+      function addressDelay(){
+        setTimeout(()=>{startLogging=setInterval(logTime, 500)}, 30);
+      }
 
       function downloadData(){
         let data=new Blob([JSON.stringify(log)],{type:'application/json'});
@@ -54,23 +54,21 @@
         document.body.removeChild(a);
       }
 
-      // video.addEventListener("play", addressDelay);
-      // video.addEventListener("pause", (event)=>{clearInterval(startLogging)});   
+      video.addEventListener("play", addressDelay);
+      video.addEventListener("pause", (event)=>{clearInterval(startLogging)});   
       video.addEventListener('pause', (event)=>{slider.disabled=true});
       video.addEventListener("play", (event)=>{slider.disabled=false});
       video.addEventListener('ended', downloadData);
 
-      slider.addEventListener('input', logTime );
+      slider.addEventListener('input', logTime )
                 
       function logTime(){
-        console.log("Starting: "+video.currentTime);
-        let hours=Math.floor(video.currentTime/3600);
-        let minutes=Math.floor((video.currentTime-hours)/60);
-        let seconds=((video.currentTime-(hours*3600))-(minutes*60))
-        log[hours+":"+minutes+":"+seconds]=slider.value;
-        console.log("Ending: "+video.currentTime);
-          
-        
+        if(!(video.currentTime.toString() in log) ){
+          let hours=Math.floor(video.currentTime/3600);
+          let minutes=Math.floor((video.currentTime-hours)/60);
+          let seconds=Math.floor(((video.currentTime-(hours*3600))-(minutes*60)))
+          log[hours+":"+minutes+":"+seconds]=slider.value;
+        }
       }
 
       document.onkeypress = function(e){

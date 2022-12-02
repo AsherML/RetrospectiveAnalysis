@@ -63,14 +63,15 @@
       slider.addEventListener('input', logTime );
                 
       function logTime(){
-        console.log("Starting: "+video.currentTime);
-        let hours=Math.floor(video.currentTime/3600);
-        let minutes=Math.floor((video.currentTime-hours)/60);
-        let seconds=((video.currentTime-(hours*3600))-(minutes*60))
-        log[hours+":"+minutes+":"+seconds]=slider.value;
-        console.log("Ending: "+video.currentTime);
+        if(!(video.currentTime.toString() in log) ){
+          console.log(video.currentTime);
+          let hours=Math.floor(video.currentTime/3600);
+          let minutes=Math.floor((video.currentTime-hours)/60);
+          let seconds=Math.floor(((video.currentTime-(hours*3600))-(minutes*60)))
+          log[hours+":"+minutes+":"+seconds]=slider.value;
+          console.log("Ending: "+video.currentTime);
           
-        
+        }
       }
 
       document.onkeypress = function(e){
