@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="stylesheet" href="style.css" />
+    <script src="logger.js"></script>
+  </head>
+  <body>
+    <div id="main">
+      <div id="control-panel">
+        <h1 onclick="downloadData()">CORAE v0.13a</h1>
+      </div>      
+      <video id="video">
+        <source src="video.mp4" type="video/mp4" tabindex="-1"/>
+        Your browser doesn't support the HTML5 video tag.
+      </video>
+
+      <div id="progress-bar">
+        <div id="progress"></div>
+      </div>  
+      
+      <!--Controls-->
+      <div id="control-container">
+        <!--Slider-->
+        <input
+          id="slider"
+          type="range"
+          min="-1"
+          max="1"
+          step="0.142857142857"
+          value="0"
+        />
+
+        <!--Labels-->
+        <div id="label-container">
+          <div id="label-left">
+            <h3>Unfriendly</h3>
+          </div>
+          <div id="label-center">
+            <h3>Neutral</h3>
+          </div>
+          <div id="label-right">
+            <h3>Friendly</h3>
+          </div>
+        </div>
+    </div>
+
+    <script>
+      var log={}
+      var slider=document.getElementById("slider");
+      var video=document.getElementById("video");
+      var main=document.getElementById("main");
+      var progressBar = document.getElementById("progress-bar");
+      var progress = document.getElementById("progress");
+      
+      //slider.setAttribute("disabled", "true");
+      var startLogging;
+
+      function addressDelay(){
+        setTimeout(()=>{startLogging=setInterval(logTime, 500)}, 30);
+      }
+
+      function downloadData(){
+        let data=new Blob([JSON.stringify(log)],{type:'application/json'});
+        let a=window.document.createElement('a');
+        a.href=window.URL.createObjectURL(data);
+        a.download="results.json";
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+      }
+
+      video.addEventListener("play", addressDelay);
+      video.addEventListener("pause", (event)=>{clearInterval(startLogging)});   
+      video.addEventListener('pause', (event)=>{slider.disabled=true});
+      video.addEventListener("play", (event)=>{slider.disabled=false});
+      video.addEventListener('ended', downloadData);
+                
+      function logTime(){
+        if(!(video.currentTime.toString() in log) ){
+          let hours=Math.floor(video.currentTime/3600);
+          let minutes=Math.floor((video.currentTime-hours)/60);
+          let seconds=Math.floor(((video.currentTime-(hours*3600))-(minutes*60)))
+          log[hours+":"+minutes+":"+seconds]=slider.value;
+        }
+      }
+
+      document.onkeypress = function(e){
+          if((e || window.event).keyCode === 32){
+              video.paused ? video.play() : video.pause();
+              video.paused ? console.log("Paused!"): console.log("Playing!");
+              console.log(slider.value);
+          }
+      };
+              // Update the progress bar as the video plays
+      video.addEventListener("timeupdate", function() {
+        var percentage = (video.currentTime / video.duration) * 100;
+        progress.style.width = percentage + "%";
+      });
+    </script>
+  </body>
+</html>
