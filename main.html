@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link rel="stylesheet" href="style.css" />
+    <script src="logger.js"></script>
+</head>
+
+<body onload="IDPrompt()">
+    <div id="main">
+        <div id="control-panel">
+            <h1 onclick="downloadData()">CORAE v0.13a</h1>
+        </div>
+        <video id="video">
+            <source src="video.mp4" type="video/mp4" tabindex="-1" />
+            Your browser doesn't support the HTML5 video tag.
+        </video>
+
+        <div id="progress-bar">
+            <div id="progress"></div>
+        </div>
+
+        <!--Controls-->
+        <div id="control-container">
+            <!--Slider-->
+            <input id="slider" type="range" min="-1" max="1" step="0.142857142857" value="0" />
+
+            <!--Labels-->
+            <div id="label-container">
+                <div id="label-left">
+                    <h3>Unfriendly</h3>
+                </div>
+                <div id="label-center">
+                    <h3>Neutral</h3>
+                </div>
+                <div id="label-right">
+                    <h3>Friendly</h3>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            var log = {}
+            var slider = document.getElementById("slider");
+            var video = document.getElementById("video");
+            var main = document.getElementById("main");
+            var progressBar = document.getElementById("progress-bar");
+            var progress = document.getElementById("progress");
+            var personID = null;
+
+            //slider.setAttribute("disabled", "true");
+            var startLogging;
+
+            function addressDelay() {
+                setTimeout(() => { startLogging = setInterval(logTime, 500) }, 30);
+            }
+
+            function IDPrompt() {
+                let person = prompt("INSTRUCTIONS:\n-Play/Pause video: Spacebar\n-Move Slider: Left/Right arrow keys\n\nYou *cannot* move the slider while the video is paused.\n\nPlease rate how the other participant came across during your discussion.\n\n To continue, insert your participant ID:", "00");
+                if (person == null || person == "" || person == "00") {
+                    IDPrompt();
+                } else {
+                    log["ID"] = person;
+                    window.personID = person;
+                }
+            }
+
+            //function askID() {
+            //    let person = sessionStorage.getItem('person');
+            //    if (person == null) {
+                    //IDPrompt();
+            //    }
+            //    else {
+            //        sessionStorage.setItem('person', person);
+            //   }
+            //}
+
+            function downloadData() {
+                let data = new Blob([JSON.stringify(log)], { type: 'application/json' });
+                let a = window.document.createElement('a');
+                a.href = window.URL.createObjectURL(data);
+                a.download = personID + "results.json";
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+            }
+
+            video.addEventListener("play", addressDelay);
+            video.addEventListener("pause", (event) => { clearInterval(startLogging) });
+            video.addEventListener('pause', (event) => { slider.disabled = true });
+            video.addEventListener('pause', (event) => { video.focus() });
+            video.addEventListener("play", (event) => { slider.disabled = false });
+            video.addEventListener("play", (event) => { slider.focus() });
+            video.addEventListener('ended', downloadData);
+            //video.addEventListener("load",IDPrompt);
+
+            function logTime() {
+                if (!(video.currentTime.toString() in log)) {
+                    let hours = Math.floor(video.currentTime / 3600);
+                    let minutes = Math.floor((video.currentTime - hours) / 60);
+                    let seconds = Math.floor(((video.currentTime - (hours * 3600)) - (minutes * 60)))
+                    log[hours + ":" + minutes + ":" + seconds] = slider.value;
+                }
+            }
+
+            document.onkeydown = function (e) {
+                if ((e || window.event).keyCode === 32) {
+                    video.paused ? video.play() : video.pause();
+                    video.paused ? console.log("Paused!") : console.log("Playing!");
+                    //console.log(video.paused)
+                    console.log(slider.value);
+                }
+            };
+            // Update the progress bar as the video plays
+            video.addEventListener("timeupdate", function () {
+                var percentage = (video.currentTime / video.duration) * 100;
+                progress.style.width = percentage + "%";
+            });
+        </script>
+</body>
+
+</html>
